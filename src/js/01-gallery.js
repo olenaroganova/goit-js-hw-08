@@ -17,7 +17,7 @@ function createMarkup(arr) {
 
 function handleClick(event) {
     event.preventDefault();
-    
+
     if (!event.target.classList.contains('gallery__item')) {
         return;
     }
@@ -26,13 +26,16 @@ function handleClick(event) {
         lightbox.destroy();
     }
 
-    lightbox = new SimpleLightbox(event.target.parentElement, {
+    const largeImg = event.target.querySelector('img').dataset.source;
+    const description = event.target.querySelector('img').alt;
+
+    lightbox = new SimpleLightbox(`<img src="${largeImg}" alt="${description}">`, {
         captionsData: "alt",
         captionPosition: "bottom",
     });
 
     lightbox.show();
-    
+
     window.addEventListener('keyup', closeModal);
 }
 
@@ -41,4 +44,3 @@ function closeModal(event) {
         lightbox.close();
         window.removeEventListener('keyup', closeModal);
     }
-}
