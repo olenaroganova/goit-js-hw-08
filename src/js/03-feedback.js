@@ -1,54 +1,40 @@
-// Підключаємо бібліотеку lodash.throttle
 import throttle from 'lodash.throttle';
 
 const form = document.querySelector('.feedback-form');
-const emailInput = form.querySelector('input[name="email"]');
-const messageInput = form.querySelector('textarea[name="message"]');
 const feedbackKey = 'feedback-form-state';
 
-// Функція для збереження даних в локальному сховищі
-function saveDataToLocalStorage() {
-  const formData = {
-    email: emailInput.value,
-    message: messageInput.value,
-  };
+let formData = {};
 
+function saveDataToLocalStorage(e) {
+  formData[e.target.name] = e.target.value.trim();
   localStorage.setItem(feedbackKey, JSON.stringify(formData));
 }
 
-// Функція для заповнення полів форми зі збереженими даними
 function populateFormFields() {
-  const savedData = localStorage.getItem(feedbackKey);
-
-  if (savedData) {
-    const formData = JSON.parse(savedData);
-    emailInput.value = formData.email;
-    messageInput.value = formData.message;
+  try {
+    const savedData = localStorage.getItem(KEY);
+    if (!savedData) return;
+    formData = JSON.parse(savedData);
+    Object.entries(formData).forEach(([key, val]) => {
+      form.elements[key].value = val;
+    });
+  } catch ({ message }) {
+    console.log(message);
   }
+
 }
 
-// Функція для виводу даних у консоль та очищення сховища та поля форми
-function handleSubmit(event) {
-  event.preventDefault();
-
-  const formData = {
-    email: emailInput.value,
-    message: messageInput.value,
-  };
-
+function handleSubmit(e) {
+  e.preventDefault();
   console.log(formData);
-
+  formData = {};
   localStorage.removeItem(feedbackKey);
-  emailInput.value = '';
-  messageInput.value = '';
+  e.target.reset();
 }
 
-// Використовуємо lodash.throttle для оновлення сховища не частіше, ніж раз на 500 мілісекунд
 const throttledSaveDataToLocalStorage = throttle(saveDataToLocalStorage, 500);
 
-// Додаємо обробники подій
 form.addEventListener('input', throttledSaveDataToLocalStorage);
 form.addEventListener('submit', handleSubmit);
 
-// Заповнюємо поля форми при завантаженні сторінки
 populateFormFields();

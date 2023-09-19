@@ -15,32 +15,8 @@ function createMarkup(arr) {
         </a>`).join('');
 }
 
-function handleClick(event) {
-    event.preventDefault();
-
-    if (!event.target.classList.contains('gallery__item')) {
-        return;
-    }
-
-    if (lightbox) {
-        lightbox.destroy();
-    }
-
-    const largeImg = event.target.querySelector('img').dataset.source;
-    const description = event.target.querySelector('img').alt;
-
-    lightbox = new SimpleLightbox(`<img src="${largeImg}" alt="${description}">`, {
+lightbox = new SimpleLightbox(`<img src="${largeImg}" alt="${description}">`, {
         captionsData: "alt",
         captionPosition: "bottom",
-    });
+});
 
-    lightbox.show();
-
-    window.addEventListener('keyup', closeModal);
-}
-
-function closeModal(event) {
-    if (event.key === "Escape" && lightbox) {
-        lightbox.close();
-        window.removeEventListener('keyup', closeModal);
-    }
